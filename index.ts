@@ -1,7 +1,14 @@
 import cors from "cors";
 import { configDotenv } from "dotenv";
-import Express, { json, Request, Response, urlencoded } from "express";
-import sequelize from "./config/database";
+import Express, {
+  json,
+  NextFunction,
+  Request,
+  Response,
+  urlencoded,
+} from "express";
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
+import { checkAuthentication } from "./middlewares/auth.middleware";
 import authRoutes from "./routes/auth.route";
 import jobRoutes from "./routes/job.route";
 
@@ -14,6 +21,16 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 
 // Routes
+app.get(
+  "/verify-token",
+  checkAuthentication,
+  async (_: Request, res: Response, __: NextFunction) => {
+    res.status(StatusCodes.OK).json({
+      status: StatusCodes.ACCEPTED,
+      message: ReasonPhrases.ACCEPTED,
+    });
+  }
+);
 app.use(authRoutes);
 app.use(jobRoutes);
 
@@ -32,7 +49,7 @@ async function runServer() {
   try {
     // Use this to create table
     // await sequelize.sync({ force: true });
-    await sequelize.sync();
+    // await sequelize.sync();
 
     app.listen(PORT, () => {
       console.log(`Server running on port: ${PORT}`);
