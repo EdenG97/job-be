@@ -5,7 +5,7 @@ const JOBS_API = "https://dev6.dansmultipro.com/api/recruitment/positions.json";
 const JOB_DETAIL = "https://dev6.dansmultipro.com/api/recruitment/positions/";
 
 export async function jobs(req: Request, res: Response) {
-  const { description, location, fulltime } = req.query;
+  const { limit, description, location, fulltime } = req.query;
 
   const queryParams = new URLSearchParams();
   if (description) {
@@ -24,11 +24,18 @@ export async function jobs(req: Request, res: Response) {
   }
 
   const response = await fetch(`${JOBS_API}?${queryParams}`);
-  const data = await response.json();
+  const data = (await response.json()) as any[];
+
+  let limitedData = [...data];
+  if (limit) {
+    limitedData = data.slice(0, parseInt(limit.toString()));
+  }
+
   res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,
     message: ReasonPhrases.OK,
-    data: data,
+    total: data.length,
+    data: limitedData,
   });
 }
 
