@@ -48,8 +48,6 @@ async function runServer() {
   const PORT = 3001;
 
   try {
-    // Use this to create table
-    // await sequelize.sync({ force: true });
     await sequelize.sync();
 
     app.listen(PORT, () => {
