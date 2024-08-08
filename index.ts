@@ -8,6 +8,7 @@ import Express, {
   urlencoded,
 } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
+import sequelize from "./config/database";
 import { checkAuthentication } from "./middlewares/auth.middleware";
 import authRoutes from "./routes/auth.route";
 import jobRoutes from "./routes/job.route";
@@ -49,7 +50,7 @@ async function runServer() {
   try {
     // Use this to create table
     // await sequelize.sync({ force: true });
-    // await sequelize.sync();
+    await sequelize.sync();
 
     app.listen(PORT, () => {
       console.log(`Server running on port: ${PORT}`);
